@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+	<head>
+		<meta charset="UTF-8">
+		<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no"> -->
+		<title>BigQuery chicago-taxi-trips</title>
+		<link href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" rel="stylesheet">
+		<style>
+			header {
+				margin: 0 auto;
+				text-align: center;
+			}
+			#table {
+				width: 350px;
+				margin: 0 auto;
+				text-align: center;
+			}
+			#hot-display-license-info {
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1 class="web-title">芝加哥計程車資料庫查詢</h1>
+		</header>
+		<label>年份：</label>
+		<input type="text" id="year-input" placeholder="2019">
+		<label>月份：</label>
+		<input type="text" id="month-input" placeholder="07">
+		<button id="" onclick="search();">查詢</button>
+		<div id="table"></div>
+
+	</body>
+	<script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+	<!-- <script src="/static/js/lib.js"></script> -->
+	<script>
+		function freshTable(year, month) {
+			fetch (`http://localhost:3000/chicago-taxi-trips-detail/${year}/${month}`, {headers: {'Content-Type': 'application/json'}, method: "get"})
+				.then( (res) => {
+					if (!res.ok) throw new Error(res.statusText);		//check status
+					return res.json();			//這邊要用 JSON 不能用 text()
+				})
+				.then( (res) => {
+					//console.log(res);
+					
+					// 做成合適的表格形式
+					const data = [
+						["hour", "avg_fare", "avg_tip", "tip_fare_percent", "counts"]
+					];
+					for (let i=0; i<res.length; i++) {
+						const array = [
+							res[i].hour,
+							res[i].avg_fare,
+							res[i].avg_tip,
+							res[i].tip_fare_percent,
+							res[i].counts
+						];
+						data.push(array);
+					}
+					
+					const container = document.getElementById('table');
+					container.innerHTML = "";
+					const hot = new Handsontable(container, {
+						data: data,
+						rowHeaders: false,
+						colHeaders: true,
+						filters: true,
+						className: "htCenter",
+						dropdownMenu: true
+					});
+				})
+				.catch( (err) => {
+					console.log(err);
+				});
+		}
+		function search() {
+			const year = document.getElementById("year-input").value;
+			const month = document.getElementById("month-input").value;
+			freshTable(year, month);
+		}
+	</script>
+
+</html>
