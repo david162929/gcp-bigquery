@@ -90,7 +90,7 @@
 
 		// 更新表格與圖表資訊
 		function freshData(year, month) {
-			fetch (`http://localhost:3000/chicago-taxi-trips-detail/${year}/${month}`, {headers: {'Content-Type': 'application/json'}, method: "get"})
+			fetch (`https://davidadm.com/gcp-bigquery/chicago-taxi-trips-detail/${year}/${month}`, {headers: {'Content-Type': 'application/json'}, method: "get"})
 				.then( (res) => {
 					if (!res.ok) throw new Error(res.statusText);		//check status
 					return res.json();			//這邊要用 JSON 不能用 text()
