@@ -32,12 +32,15 @@ app.get("/", (req, res) => {
 app.get("/chicago-taxi-trips-detail/:year/:month", async (req, res) => {
     console.log(req.params.year);
     console.log(req.params.month);
+    const regY = /^20(1[3-9]|2[0-9])$/;
+    const regM = /^(0[1-9]|1[0-2])$/;
 
     if (req.params.year.length !== 4 || req.params.month.length !== 2) {
         res.send("輸入的格式有誤");
-    } else if (false) {
-        // 使用正則表達式檢查
-        console.log();
+    } else if (!regY.test(req.params.year)) {
+        res.send("請輸入正確年格式(2013~)");
+    } else if (!regM.test(req.params.month)) {
+        res.send("請輸入正確月格式");
     } else {
         // 啟動查詢
         const year = req.params.year;
